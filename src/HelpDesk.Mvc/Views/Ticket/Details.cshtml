@@ -1,0 +1,163 @@
+@model TicketDetailViewModel
+@{
+    var ticket = Model.Ticket;
+    ViewData["Title"] = "Ticket " + ticket.Id;
+}
+
+<div class="page-top">
+    <a href="/Ticket/Index" class="btn btn-grey">Back to list</a>
+    <h1>Ticket @ticket.Id</h1>
+    <div class="grey-text small-text">Raised by @ticket.RaisedBy on @Display.DateTimeText(ticket.CreatedAt)</div>
+    <div class="clear"></div>
+</div>
+
+<div class="two-columns">
+
+    <div class="column-main">
+
+        <div class="box">
+            <div class="box-title">@ticket.Title</div>
+
+            <p>
+                <span class="label-tag @Display.StatusClass(ticket.Status)">@Display.Label(ticket.Status)</span>
+                <span class="label-tag @Display.PriorityClass(ticket.Priority)">@ticket.Priority</span>
+                @if (ticket.IsOverdue)
+                {
+                    <span class="overdue">&nbsp; This ticket is overdue</span>
+                }
+            </p>
+
+            <div class="description-text">@ticket.Description</div>
+        </div>
+
+        <div class="box">
+            <div class="box-title">Comments and History (@Model.Comments.Count)</div>
+
+            @if (Model.Comments.Count == 0)
+            {
+                <div class="empty-message">No comments yet.</div>
+            }
+            else
+            {
+                foreach (var comment in Model.Comments)
+                {
+                    <div class="comment @(comment.IsSystem ? "system" : "")">
+                        <div class="comment-head">
+                            <b>@comment.Author</b>
+                            <span class="grey-text"> - @Display.DateTimeText(comment.CreatedAt)</span>
+
+                            @if (!comment.IsSystem)
+                            {
+                                <form method="post" action="/Ticket/DeleteComment/@ticket.Id" style="display:inline; float:right;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="commentId" value="@comment.Id" />
+                                    <button type="submit" class="btn btn-small btn-red"
+                                            onclick="return confirmDelete('Delete this comment?');">Delete</button>
+                                </form>
+                            }
+                        </div>
+                        <div>@comment.Body</div>
+                    </div>
+                }
+            }
+
+            <br />
+            <h3>Add a Comment</h3>
+
+            <form method="post" action="/Ticket/AddComment/@ticket.Id">
+                @Html.AntiForgeryToken()
+
+                <div class="form-row">
+                    <label for="commentAuthor">Your Name</label>
+                    <input type="text" id="commentAuthor" name="newComment.Author" maxlength="80" required />
+                </div>
+
+                <div class="form-row">
+                    <label for="commentBody">Comment</label>
+                    <textarea id="commentBody" name="newComment.Body" rows="3" maxlength="1000" required></textarea>
+                </div>
+
+                <button type="submit" class="btn">Add Comment</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="column-side">
+
+        <div class="box">
+            <div class="box-title">Change Status</div>
+
+            @foreach (var status in Enum.GetValues<TicketStatus>())
+            {
+                <form method="post" action="/Ticket/ChangeStatus/@ticket.Id" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="@status" />
+                    <input type="hidden" name="changedBy" value="Help Desk Agent" />
+                    <button type="submit"
+                            class="btn btn-small @(ticket.Status == status ? "" : "btn-grey")"
+                            disabled="@(ticket.Status == status)">
+                        @Display.Label(status)
+                    </button>
+                </form>
+            }
+
+            <div class="hint">The change will be saved in the history above.</div>
+        </div>
+
+        <div class="box">
+            <div class="box-title">Ticket Information</div>
+
+            <div class="info-row"><b>Status</b> @Display.Label(ticket.Status)</div>
+            <div class="info-row"><b>Priority</b> @ticket.Priority</div>
+            <div class="info-row"><b>Category</b> @ticket.Category</div>
+            <div class="info-row"><b>Raised by</b> @ticket.RaisedBy</div>
+
+            @if (!string.IsNullOrEmpty(ticket.RaisedByEmail))
+            {
+                <div class="info-row"><b>Email</b> @ticket.RaisedByEmail</div>
+            }
+
+            <div class="info-row">
+                <b>Assigned to</b>
+                @if (string.IsNullOrEmpty(ticket.AssignedTo))
+                {
+                    <span class="grey-text">Not assigned</span>
+                }
+                else
+                {
+                    @ticket.AssignedTo
+                }
+            </div>
+
+            <div class="info-row"><b>Created</b> @Display.DateTimeText(ticket.CreatedAt)</div>
+            <div class="info-row"><b>Updated</b> @Display.DateTimeText(ticket.UpdatedAt)</div>
+            <div class="info-row"><b>Due date</b> @Display.DateTimeText(ticket.DueDate)</div>
+
+            <div class="info-row">
+                <b>SLA</b>
+                @if (ticket.IsOverdue)
+                {
+                    <span class="overdue">Overdue</span>
+                }
+                else
+                {
+                    @Display.DueText(ticket)
+                }
+            </div>
+
+            @if (ticket.ResolvedAt != null)
+            {
+                <div class="info-row"><b>Resolved</b> @Display.DateTimeText(ticket.ResolvedAt.Value)</div>
+            }
+        </div>
+
+        <div class="box">
+            <div class="box-title">Actions</div>
+            <a href="/Ticket/Edit/@ticket.Id" class="btn btn-orange">Edit Ticket</a>
+            <a href="/Ticket/Delete/@ticket.Id" class="btn btn-red">Delete Ticket</a>
+        </div>
+
+    </div>
+
+</div>

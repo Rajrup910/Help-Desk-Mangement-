@@ -1,0 +1,245 @@
+@model TicketListViewModel
+@using Microsoft.AspNetCore.Routing
+@{
+    ViewData["Title"] = "All Tickets";
+    var query = Model.Query;
+    var result = Model.Result;
+
+    // Builds a link that keeps the current filters, changing only what we pass in.
+    string Link(string key, string? value)
+    {
+        var values = new RouteValueDictionary();
+
+        if (!string.IsNullOrEmpty(query.Search)) { values["search"] = query.Search; }
+        if (query.Status != null) { values["status"] = query.Status.ToString(); }
+        if (query.Priority != null) { values["priority"] = query.Priority.ToString(); }
+        if (query.Category != null) { values["category"] = query.Category.ToString(); }
+        if (query.OverdueOnly == true) { values["overdueOnly"] = "true"; }
+
+        values["sortBy"] = query.SortBy.ToString();
+        values["sortDir"] = query.SortDir.ToString();
+        values["pageSize"] = query.PageSize;
+        values["page"] = query.Page;
+
+        values[key] = value;
+
+        return Url.Action("Index", "Ticket", values) ?? "#";
+    }
+
+    // Clicking the same column again reverses the order.
+    string SortLink(TicketSortField field)
+    {
+        var direction = "Desc";
+        if (query.SortBy == field && query.SortDir == SortDirection.Desc)
+        {
+            direction = "Asc";
+        }
+
+        var values = new RouteValueDictionary();
+        if (!string.IsNullOrEmpty(query.Search)) { values["search"] = query.Search; }
+        if (query.Status != null) { values["status"] = query.Status.ToString(); }
+        if (query.Priority != null) { values["priority"] = query.Priority.ToString(); }
+        if (query.Category != null) { values["category"] = query.Category.ToString(); }
+        if (query.OverdueOnly == true) { values["overdueOnly"] = "true"; }
+        values["sortBy"] = field.ToString();
+        values["sortDir"] = direction;
+        values["pageSize"] = query.PageSize;
+        values["page"] = 1;
+
+        return Url.Action("Index", "Ticket", values) ?? "#";
+    }
+
+    var firstRow = result.TotalCount == 0 ? 0 : (result.Page - 1) * result.PageSize + 1;
+    var lastRow = Math.Min(result.Page * result.PageSize, result.TotalCount);
+}
+
+<div class="page-top">
+    <a href="/Ticket/Create" class="btn">+ New Ticket</a>
+    <h1>All Tickets</h1>
+    <div class="grey-text small-text">
+        @if (result.TotalCount == 0)
+        {
+            <text>No tickets found.</text>
+        }
+        else
+        {
+            <text>Showing @firstRow to @lastRow of @result.TotalCount tickets.</text>
+        }
+    </div>
+    <div class="clear"></div>
+</div>
+
+<div class="box">
+    <form method="get" action="/Ticket/Index">
+        <input type="hidden" name="sortBy" value="@query.SortBy" />
+        <input type="hidden" name="sortDir" value="@query.SortDir" />
+        <input type="hidden" name="page" value="1" />
+        @if (query.OverdueOnly == true)
+        {
+            <input type="hidden" name="overdueOnly" value="true" />
+        }
+
+        <div class="filters">
+            <div class="form-row">
+                <label for="search">Search</label>
+                <input type="text" id="search" name="search" value="@query.Search" placeholder="Enter a keyword" />
+            </div>
+
+            <div class="form-row">
+                <label for="status">Status</label>
+                <select id="status" name="status" class="auto-submit">
+                    <option value="">All</option>
+                    @foreach (var status in Enum.GetValues<TicketStatus>())
+                    {
+                        <option value="@status" selected="@(query.Status == status)">@Display.Label(status)</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="priority">Priority</label>
+                <select id="priority" name="priority" class="auto-submit">
+                    <option value="">All</option>
+                    @foreach (var priority in Enum.GetValues<TicketPriority>())
+                    {
+                        <option value="@priority" selected="@(query.Priority == priority)">@priority</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="category">Category</label>
+                <select id="category" name="category" class="auto-submit">
+                    <option value="">All</option>
+                    @foreach (var category in Enum.GetValues<TicketCategory>())
+                    {
+                        <option value="@category" selected="@(query.Category == category)">@category</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-row">
+                <label for="pageSize">Per page</label>
+                <select id="pageSize" name="pageSize" class="auto-submit">
+                    <option value="10" selected="@(query.PageSize == 10)">10</option>
+                    <option value="25" selected="@(query.PageSize == 25)">25</option>
+                    <option value="50" selected="@(query.PageSize == 50)">50</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <button type="submit" class="btn">Search</button>
+                <a href="/Ticket/Index" class="btn btn-grey">Reset</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="box">
+
+    @if (result.Items.Count == 0)
+    {
+        <div class="empty-message">
+            No tickets match your search.<br /><br />
+            <a href="/Ticket/Index" class="btn btn-grey">Clear search</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-scroll">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th><a href="@SortLink(TicketSortField.Title)">Title</a></th>
+                    <th>Category</th>
+                    <th><a href="@SortLink(TicketSortField.Priority)">Priority</a></th>
+                    <th><a href="@SortLink(TicketSortField.Status)">Status</a></th>
+                    <th>Raised By</th>
+                    <th>Assigned To</th>
+                    <th><a href="@SortLink(TicketSortField.DueDate)">Due</a></th>
+                    <th><a href="@SortLink(TicketSortField.CreatedAt)">Created</a></th>
+                    <th>Actions</th>
+                </tr>
+
+                @foreach (var ticket in result.Items)
+                {
+                    <tr>
+                        <td>@ticket.Id</td>
+                        <td><a href="/Ticket/Details/@ticket.Id">@Display.Short(ticket.Title, 40)</a></td>
+                        <td class="small-text">@ticket.Category</td>
+                        <td>
+                            <span class="label-tag @Display.PriorityClass(ticket.Priority)">@ticket.Priority</span>
+                        </td>
+                        <td>
+                            <span class="label-tag @Display.StatusClass(ticket.Status)">@Display.Label(ticket.Status)</span>
+                        </td>
+                        <td class="small-text">@ticket.RaisedBy</td>
+                        <td class="small-text">
+                            @if (string.IsNullOrEmpty(ticket.AssignedTo))
+                            {
+                                <span class="grey-text">Not assigned</span>
+                            }
+                            else
+                            {
+                                @ticket.AssignedTo
+                            }
+                        </td>
+                        <td class="small-text">
+                            @if (ticket.IsOverdue)
+                            {
+                                <span class="overdue">Overdue</span>
+                            }
+                            else
+                            {
+                                @Display.DueText(ticket)
+                            }
+                        </td>
+                        <td class="small-text">@Display.DateTimeText(ticket.CreatedAt)</td>
+                        <td>
+                            <a href="/Ticket/Details/@ticket.Id" class="btn btn-small">View</a>
+                            <a href="/Ticket/Edit/@ticket.Id" class="btn btn-small btn-orange">Edit</a>
+                            <a href="/Ticket/Delete/@ticket.Id" class="btn btn-small btn-red">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+
+        @if (result.TotalPages > 1)
+        {
+            <div class="paging">
+                @if (result.HasPrevious)
+                {
+                    <a href="@Link("page", (result.Page - 1).ToString())">Previous</a>
+                }
+                else
+                {
+                    <span class="disabled">Previous</span>
+                }
+
+@* The variable is named pageNumber because "@page" is a reserved Razor directive. *@
+                @for (var pageNumber = 1; pageNumber <= result.TotalPages; pageNumber++)
+                {
+                    if (pageNumber == result.Page)
+                    {
+                        <span class="current">@pageNumber</span>
+                    }
+                    else
+                    {
+                        <a href="@Link("page", pageNumber.ToString())">@pageNumber</a>
+                    }
+                }
+
+                @if (result.HasNext)
+                {
+                    <a href="@Link("page", (result.Page + 1).ToString())">Next</a>
+                }
+                else
+                {
+                    <span class="disabled">Next</span>
+                }
+            </div>
+        }
+    }
+
+</div>

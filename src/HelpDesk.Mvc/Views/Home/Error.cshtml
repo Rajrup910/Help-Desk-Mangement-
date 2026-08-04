@@ -1,0 +1,22 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="page-top">
+    <h1>Error</h1>
+    <div class="clear"></div>
+</div>
+
+<div class="message message-error">
+    @Model.Message
+</div>
+
+<div class="box">
+    @if (Model.ShowRequestId)
+    {
+        <p class="small-text grey-text">Request ID: @Model.RequestId</p>
+    }
+
+    <a href="/Ticket/Dashboard" class="btn">Go to Dashboard</a>
+</div>

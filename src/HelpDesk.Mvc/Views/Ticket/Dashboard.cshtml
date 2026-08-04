@@ -1,0 +1,189 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var stats = Model.Stats;
+
+    // Used to work out the width of each bar as a percentage.
+    var maxPriority = 1;
+    foreach (var item in stats.ByPriority)
+    {
+        if (item.Value > maxPriority) { maxPriority = item.Value; }
+    }
+
+    var maxCategory = 1;
+    foreach (var item in stats.ByCategory)
+    {
+        if (item.Value > maxCategory) { maxCategory = item.Value; }
+    }
+}
+
+<div class="page-top">
+    <a href="/Ticket/Create" class="btn">+ New Ticket</a>
+    <h1>Dashboard</h1>
+    <div class="grey-text small-text">Summary of all support tickets</div>
+    <div class="clear"></div>
+</div>
+
+<div class="cards">
+    <div class="card blue">
+        <div class="number">@stats.Total</div>
+        <div class="label">Total Tickets</div>
+    </div>
+    <div class="card blue">
+        <div class="number">@stats.Open</div>
+        <div class="label">Open</div>
+    </div>
+    <div class="card orange">
+        <div class="number">@stats.InProgress</div>
+        <div class="label">In Progress</div>
+    </div>
+    <div class="card green">
+        <div class="number">@(stats.Resolved + stats.Closed)</div>
+        <div class="label">Resolved / Closed</div>
+    </div>
+    <div class="card red">
+        <div class="number">@stats.Overdue</div>
+        <div class="label">Overdue</div>
+    </div>
+</div>
+
+<div class="two-columns">
+
+    <div class="column-main">
+        <div class="box">
+            <div class="box-title">Recent Tickets</div>
+
+            @if (Model.RecentTickets.Count == 0)
+            {
+                <div class="empty-message">
+                    No tickets have been raised yet.<br /><br />
+                    <a href="/Ticket/Create" class="btn">Raise the first ticket</a>
+                </div>
+            }
+            else
+            {
+                <div class="table-scroll">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Raised By</th>
+                        </tr>
+                        @foreach (var ticket in Model.RecentTickets)
+                        {
+                            <tr>
+                                <td>@ticket.Id</td>
+                                <td><a href="/Ticket/Details/@ticket.Id">@Display.Short(ticket.Title, 40)</a></td>
+                                <td>
+                                    <span class="label-tag @Display.PriorityClass(ticket.Priority)">@ticket.Priority</span>
+                                </td>
+                                <td>
+                                    <span class="label-tag @Display.StatusClass(ticket.Status)">@Display.Label(ticket.Status)</span>
+                                </td>
+                                <td>@ticket.RaisedBy</td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+
+                <br />
+                <a href="/Ticket/Index">View all tickets</a>
+            }
+        </div>
+
+        <div class="box">
+            <div class="box-title">Tickets by Category</div>
+
+            @foreach (var item in Model.Stats.ByCategory)
+            {
+                <div class="bar-row">
+                    <div class="bar-label">@item.Key <span>@item.Value</span></div>
+                    <div class="bar">
+                        <div style="width: @(item.Value * 100 / maxCategory)%;"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="column-side">
+        <div class="box">
+            <div class="box-title">Tickets by Priority</div>
+
+            <div class="bar-row">
+                <div class="bar-label">Critical <span>@stats.ByPriority["Critical"]</span></div>
+                <div class="bar">
+                    <div class="red" style="width: @(stats.ByPriority["Critical"] * 100 / maxPriority)%;"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-label">High <span>@stats.ByPriority["High"]</span></div>
+                <div class="bar">
+                    <div class="orange" style="width: @(stats.ByPriority["High"] * 100 / maxPriority)%;"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-label">Medium <span>@stats.ByPriority["Medium"]</span></div>
+                <div class="bar">
+                    <div style="width: @(stats.ByPriority["Medium"] * 100 / maxPriority)%;"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-label">Low <span>@stats.ByPriority["Low"]</span></div>
+                <div class="bar">
+                    <div class="grey" style="width: @(stats.ByPriority["Low"] * 100 / maxPriority)%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="box-title">Overdue Tickets</div>
+
+            @if (Model.BreachingTickets.Count == 0)
+            {
+                <div class="empty-message">
+                    All tickets are within their SLA time.
+                </div>
+            }
+            else
+            {
+                foreach (var ticket in Model.BreachingTickets)
+                {
+                    <div class="info-row">
+                        <a href="/Ticket/Details/@ticket.Id">@Display.Short(ticket.Title, 32)</a><br />
+                        <span class="small-text grey-text">
+                            Ticket @ticket.Id -
+                            @(string.IsNullOrEmpty(ticket.AssignedTo) ? "Not assigned" : ticket.AssignedTo)
+                        </span>
+                        <span class="small-text overdue"> (Overdue)</span>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="box">
+            <div class="box-title">Other Information</div>
+
+            <div class="info-row">
+                <b>Unassigned</b> @stats.Unassigned tickets
+            </div>
+            <div class="info-row">
+                <b>Avg. time</b>
+                @if (stats.AverageResolutionHours != null)
+                {
+                    @(stats.AverageResolutionHours + " hours to resolve")
+                }
+                else
+                {
+                    <text>No tickets resolved yet</text>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>

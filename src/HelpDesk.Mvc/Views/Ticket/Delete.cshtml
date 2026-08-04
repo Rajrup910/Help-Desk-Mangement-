@@ -1,0 +1,50 @@
+@model TicketDto
+@{
+    ViewData["Title"] = "Delete Ticket " + Model.Id;
+}
+
+<div class="page-top">
+    <a href="/Ticket/Details/@Model.Id" class="btn btn-grey">Back to ticket</a>
+    <h1>Delete Ticket @Model.Id</h1>
+    <div class="clear"></div>
+</div>
+
+<div class="message message-error">
+    Are you sure you want to delete this ticket? This cannot be undone.
+    All @Model.CommentCount comment(s) will also be deleted.
+</div>
+
+<div class="box">
+
+    <div class="box-title">@Model.Title</div>
+
+    <p>
+        <span class="label-tag @Display.StatusClass(Model.Status)">@Display.Label(Model.Status)</span>
+        <span class="label-tag @Display.PriorityClass(Model.Priority)">@Model.Priority</span>
+    </p>
+
+    <div class="description-text grey-text">@Display.Short(Model.Description, 300)</div>
+
+    <br />
+
+    <div class="info-row"><b>Category</b> @Model.Category</div>
+    <div class="info-row"><b>Raised by</b> @Model.RaisedBy</div>
+    <div class="info-row">
+        <b>Assigned to</b>
+        @(string.IsNullOrEmpty(Model.AssignedTo) ? "Not assigned" : Model.AssignedTo)
+    </div>
+    <div class="info-row"><b>Created</b> @Display.DateTimeText(Model.CreatedAt)</div>
+
+    <br />
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display:inline;">
+        @Html.AntiForgeryToken()
+        <button type="submit" class="btn btn-red"
+                onclick="return confirmDelete('Delete ticket @Model.Id permanently?');">
+            Yes, Delete It
+        </button>
+    </form>
+
+    <a href="/Ticket/Details/@Model.Id" class="btn btn-grey">Cancel</a>
+
+</div>

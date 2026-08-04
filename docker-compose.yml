@@ -1,0 +1,46 @@
+# Runs the whole system with one command:
+#   docker compose up --build
+# Then open http://localhost:8080 (UI) and http://localhost:8081/swagger (API docs).
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: src/HelpDesk.Api/Dockerfile
+    container_name: helpdesk-api
+    ports:
+      - "8081:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      Database__Provider: Sqlite
+      ConnectionStrings__DefaultConnection: "Data Source=/app/data/helpdesk.db"
+      # The MVC container calls the API server-side, so no browser origin needs allowing.
+      Cors__AllowedOrigins__0: "http://localhost:8080"
+    volumes:
+      - helpdesk-data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 15s
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: src/HelpDesk.Mvc/Dockerfile
+    container_name: helpdesk-web
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # "api" is the compose service name; the UI never talks to the database directly.
+      ApiSettings__BaseUrl: "http://api:8080/"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  helpdesk-data:

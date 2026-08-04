@@ -1,0 +1,33 @@
+## .NET build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+publish/
+artifacts/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Local database files (recreated and seeded on first run)
+*.db
+*.db-shm
+*.db-wal
+
+## IDE and local tool settings
+.vs/
+.vscode/
+.idea/
+.claude/
+*.swp
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Secrets — never commit real connection strings or keys
+appsettings.Production.json
+appsettings.Local.json
+*.pfx
+.env

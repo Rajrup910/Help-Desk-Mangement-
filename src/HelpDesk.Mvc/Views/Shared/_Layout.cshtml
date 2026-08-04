@@ -1,0 +1,50 @@
+@{
+    var action = (ViewContext.RouteData.Values["action"] as string ?? "").ToLower();
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Help Desk</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+    <div class="header">
+        <h1>Help Desk Management System</h1>
+        <p>Internal employee support ticket system</p>
+    </div>
+
+    <div class="menu">
+        <a href="/Ticket/Dashboard" class="@(action == "dashboard" ? "active" : "")">Dashboard</a>
+        <a href="/Ticket/Index" class="@(action == "index" ? "active" : "")">All Tickets</a>
+        <a href="/Ticket/Create" class="@(action == "create" ? "active" : "")">New Ticket</a>
+        <a href="http://localhost:5285/swagger" target="_blank">API Docs</a>
+    </div>
+
+    <div class="container">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="message message-success">@TempData["Success"]</div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="message message-error">@TempData["Error"]</div>
+        }
+
+        @RenderBody()
+
+    </div>
+
+    <div class="footer">
+        Help Desk Management System &nbsp;|&nbsp; Rajrup Roy Chowdhury &nbsp;|&nbsp; IN26010404
+    </div>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

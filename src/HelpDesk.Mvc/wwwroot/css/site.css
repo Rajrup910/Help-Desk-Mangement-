@@ -1,0 +1,504 @@
+/* Help Desk Management System - stylesheet */
+
+body {
+    margin: 0;
+    background-color: #f0f2f5;
+    color: #333333;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 15px;
+}
+
+a {
+    color: #1565c0;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0 0 5px 0;
+}
+
+h2 {
+    font-size: 19px;
+    margin: 0 0 10px 0;
+}
+
+h3 {
+    font-size: 16px;
+    margin: 0 0 8px 0;
+}
+
+/* ---------- Header and menu ---------- */
+
+.header {
+    background-color: #1565c0;
+    color: #ffffff;
+    padding: 15px 25px;
+}
+
+.header h1 {
+    color: #ffffff;
+    font-size: 22px;
+}
+
+.header p {
+    margin: 3px 0 0 0;
+    font-size: 13px;
+    color: #cfe0f5;
+}
+
+.menu {
+    background-color: #0d47a1;
+    padding: 0 25px;
+}
+
+.menu a {
+    display: inline-block;
+    padding: 12px 18px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.menu a:hover {
+    background-color: #1565c0;
+    text-decoration: none;
+}
+
+.menu a.active {
+    background-color: #ffffff;
+    color: #0d47a1;
+    font-weight: bold;
+}
+
+.container {
+    padding: 25px;
+    max-width: 1200px;
+}
+
+.footer {
+    padding: 15px 25px;
+    color: #777777;
+    font-size: 13px;
+    border-top: 1px solid #dddddd;
+    margin-top: 30px;
+}
+
+/* ---------- Boxes ---------- */
+
+.box {
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.box-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+/* ---------- Dashboard cards ---------- */
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    min-width: 160px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-top: 5px solid #1565c0;
+    border-radius: 5px;
+    padding: 18px;
+    text-align: center;
+}
+
+.card .number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.card .label {
+    font-size: 13px;
+    color: #666666;
+    margin-top: 5px;
+}
+
+.card.blue { border-top-color: #1565c0; }
+.card.orange { border-top-color: #ef6c00; }
+.card.green { border-top-color: #2e7d32; }
+.card.red { border-top-color: #c62828; }
+.card.grey { border-top-color: #757575; }
+
+/* ---------- Simple bar chart ---------- */
+
+.bar-row {
+    margin-bottom: 12px;
+}
+
+.bar-label {
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.bar-label span {
+    float: right;
+    font-weight: bold;
+}
+
+.bar {
+    background-color: #eeeeee;
+    border-radius: 3px;
+    height: 20px;
+}
+
+.bar div {
+    height: 20px;
+    border-radius: 3px;
+    background-color: #1565c0;
+}
+
+.bar div.orange { background-color: #ef6c00; }
+.bar div.green { background-color: #2e7d32; }
+.bar div.red { background-color: #c62828; }
+.bar div.grey { background-color: #757575; }
+
+/* ---------- Tables ---------- */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th {
+    background-color: #eceff1;
+    text-align: left;
+    padding: 10px;
+    border-bottom: 2px solid #cfd8dc;
+    font-size: 13px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #eeeeee;
+}
+
+tr:hover td {
+    background-color: #f5f9ff;
+}
+
+.table-scroll {
+    overflow-x: auto;
+}
+
+/* ---------- Labels (status and priority) ---------- */
+
+.label-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.open { background-color: #1565c0; }
+.progress { background-color: #ef6c00; }
+.resolved { background-color: #2e7d32; }
+.closed { background-color: #757575; }
+
+.low { background-color: #757575; }
+.medium { background-color: #1565c0; }
+.high { background-color: #ef6c00; }
+.critical { background-color: #c62828; }
+
+.overdue {
+    color: #c62828;
+    font-weight: bold;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #1565c0;
+    color: #ffffff;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #0d47a1;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.btn-grey { background-color: #757575; }
+.btn-grey:hover { background-color: #5a5a5a; }
+
+.btn-green { background-color: #2e7d32; }
+.btn-green:hover { background-color: #1b5e20; }
+
+.btn-orange { background-color: #ef6c00; }
+.btn-orange:hover { background-color: #c85800; }
+
+.btn-red { background-color: #c62828; }
+.btn-red:hover { background-color: #9e1f1f; }
+
+.btn:disabled {
+    background-color: #bbbbbb;
+    cursor: not-allowed;
+}
+
+/* ---------- Forms ---------- */
+
+.form-row {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+input[type=text],
+input[type=email],
+input[type=search],
+input[type=datetime-local],
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #bbbbbb;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    color: #333333;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: #1565c0;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.hint {
+    font-size: 12px;
+    color: #777777;
+    margin-top: 4px;
+}
+
+/* Validation messages produced by the tag helpers */
+.field-validation-error {
+    display: block;
+    color: #c62828;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.input-validation-error {
+    border-color: #c62828;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+/* ---------- Messages ---------- */
+
+.message {
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.message-success {
+    background-color: #e8f5e9;
+    border: 1px solid #2e7d32;
+    color: #1b5e20;
+}
+
+.message-error {
+    background-color: #ffebee;
+    border: 1px solid #c62828;
+    color: #b71c1c;
+}
+
+.message-info {
+    background-color: #e3f2fd;
+    border: 1px solid #1565c0;
+    color: #0d47a1;
+}
+
+/* ---------- Small helpers ---------- */
+
+.right {
+    text-align: right;
+}
+
+.grey-text {
+    color: #777777;
+}
+
+.small-text {
+    font-size: 13px;
+}
+
+.page-top {
+    margin-bottom: 20px;
+}
+
+.page-top .btn {
+    float: right;
+}
+
+.clear {
+    clear: both;
+}
+
+.two-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.column-main {
+    flex: 2;
+    min-width: 300px;
+}
+
+.column-side {
+    flex: 1;
+    min-width: 250px;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #777777;
+}
+
+/* ---------- Filter bar ---------- */
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.filters .form-row {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 140px;
+}
+
+/* ---------- Details page ---------- */
+
+.info-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #eeeeee;
+    font-size: 14px;
+}
+
+.info-row b {
+    display: inline-block;
+    width: 110px;
+    color: #666666;
+    font-weight: normal;
+}
+
+.description-text {
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.comment {
+    border: 1px solid #eeeeee;
+    border-left: 4px solid #1565c0;
+    border-radius: 4px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background-color: #fafafa;
+}
+
+.comment.system {
+    border-left-color: #bbbbbb;
+    background-color: #f5f5f5;
+    color: #666666;
+}
+
+.comment-head {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.comment-head b {
+    color: #333333;
+}
+
+/* ---------- Pagination ---------- */
+
+.paging {
+    margin-top: 15px;
+}
+
+.paging a,
+.paging span {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-right: 4px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    background-color: #ffffff;
+    font-size: 13px;
+}
+
+.paging a:hover {
+    background-color: #e3f2fd;
+    text-decoration: none;
+}
+
+.paging span.current {
+    background-color: #1565c0;
+    border-color: #1565c0;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.paging span.disabled {
+    color: #bbbbbb;
+}

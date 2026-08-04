@@ -1,0 +1,31 @@
+@model ErrorViewModel
+@{
+    ViewData["Title"] = "Problem";
+}
+
+<div class="page-top">
+    <h1>Sorry, something went wrong</h1>
+    <div class="clear"></div>
+</div>
+
+<div class="message message-error">
+    @Model.Message
+</div>
+
+<div class="box">
+    <div class="box-title">What can I do?</div>
+
+    <p>
+        This website gets all its data from the Web API project. If the API is not running,
+        no tickets can be shown.
+    </p>
+
+    <p>
+        Start the <b>HelpDesk.Api</b> project first, then refresh this page. You can check that the
+        API is working by opening
+        <a href="http://localhost:5285/health" target="_blank">http://localhost:5285/health</a>
+        in your browser.
+    </p>
+
+    <a href="/Ticket/Dashboard" class="btn">Go to Dashboard</a>
+</div>

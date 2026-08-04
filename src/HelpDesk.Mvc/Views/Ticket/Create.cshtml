@@ -1,0 +1,83 @@
+@model CreateTicketDto
+@{
+    ViewData["Title"] = "New Ticket";
+}
+
+<div class="page-top">
+    <a href="/Ticket/Index" class="btn btn-grey">Back to list</a>
+    <h1>Raise a New Ticket</h1>
+    <div class="grey-text small-text">New tickets are always created with the status "Open".</div>
+    <div class="clear"></div>
+</div>
+
+<div class="box">
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="message message-error"></div>
+
+        <div class="form-row">
+            <label asp-for="Title">Title *</label>
+            <input asp-for="Title" type="text" maxlength="120"
+                   placeholder="Example: Laptop will not connect to the office Wi-Fi" />
+            <span asp-validation-for="Title"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Description">Description *</label>
+            <textarea asp-for="Description" rows="6" maxlength="2000"
+                      placeholder="Explain what the problem is and when it started."></textarea>
+            <span asp-validation-for="Description"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="RaisedBy">Your Name *</label>
+            <input asp-for="RaisedBy" type="text" maxlength="80" />
+            <span asp-validation-for="RaisedBy"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="RaisedByEmail">Your Email</label>
+            <input asp-for="RaisedByEmail" type="email" maxlength="120" />
+            <span asp-validation-for="RaisedByEmail"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Priority">Priority</label>
+            <select asp-for="Priority">
+                @foreach (var priority in Enum.GetValues<TicketPriority>())
+                {
+                    <option value="@priority" selected="@(Model.Priority == priority)">@priority</option>
+                }
+            </select>
+            <div class="hint">Time to fix: Critical = 4 hours, High = 24 hours, Medium = 72 hours, Low = 7 days.</div>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Category">Category</label>
+            <select asp-for="Category">
+                @foreach (var category in Enum.GetValues<TicketCategory>())
+                {
+                    <option value="@category" selected="@(Model.Category == category)">@category</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="AssignedTo">Assign To</label>
+            <input asp-for="AssignedTo" type="text" maxlength="80" placeholder="Team or person name" />
+            <span asp-validation-for="AssignedTo"></span>
+            <div class="hint">Leave this empty if nobody has been assigned yet.</div>
+        </div>
+
+        <button type="submit" class="btn btn-green">Submit Ticket</button>
+        <a href="/Ticket/Index" class="btn btn-grey">Cancel</a>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

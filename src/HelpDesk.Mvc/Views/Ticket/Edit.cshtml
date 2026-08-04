@@ -1,0 +1,105 @@
+@model TicketEditViewModel
+@{
+    ViewData["Title"] = "Edit Ticket " + Model.Id;
+}
+
+<div class="page-top">
+    <a href="/Ticket/Details/@Model.Id" class="btn btn-grey">Back to ticket</a>
+    <h1>Edit Ticket @Model.Id</h1>
+    <div class="grey-text small-text">Created on @Display.DateTimeText(Model.CreatedAt)</div>
+    <div class="clear"></div>
+</div>
+
+<div class="box">
+
+    <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedAt" />
+
+        <div asp-validation-summary="ModelOnly" class="message message-error"></div>
+
+        <div class="form-row">
+            <label asp-for="Form.Title">Title *</label>
+            <input asp-for="Form.Title" type="text" maxlength="120" />
+            <span asp-validation-for="Form.Title"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.Description">Description *</label>
+            <textarea asp-for="Form.Description" rows="6" maxlength="2000"></textarea>
+            <span asp-validation-for="Form.Description"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.Status">Status</label>
+            <select asp-for="Form.Status">
+                @foreach (var status in Enum.GetValues<TicketStatus>())
+                {
+                    <option value="@status" selected="@(Model.Form.Status == status)">@Display.Label(status)</option>
+                }
+            </select>
+            <div class="hint">Choosing Resolved or Closed will save the date it was completed.</div>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.Priority">Priority</label>
+            <select asp-for="Form.Priority">
+                @foreach (var priority in Enum.GetValues<TicketPriority>())
+                {
+                    <option value="@priority" selected="@(Model.Form.Priority == priority)">@priority</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.Category">Category</label>
+            <select asp-for="Form.Category">
+                @foreach (var category in Enum.GetValues<TicketCategory>())
+                {
+                    <option value="@category" selected="@(Model.Form.Category == category)">@category</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.RaisedBy">Raised By *</label>
+            <input asp-for="Form.RaisedBy" type="text" maxlength="80" />
+            <span asp-validation-for="Form.RaisedBy"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.RaisedByEmail">Email</label>
+            <input asp-for="Form.RaisedByEmail" type="email" maxlength="120" />
+            <span asp-validation-for="Form.RaisedByEmail"></span>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.AssignedTo">Assigned To</label>
+            <input asp-for="Form.AssignedTo" type="text" maxlength="80" placeholder="Not assigned" />
+            <span asp-validation-for="Form.AssignedTo"></span>
+        </div>
+
+        <div class="form-row">
+            @* Written by hand because the stored value is UTC but this input needs local time. *@
+            <label for="Form_DueDate">Due Date</label>
+            <input type="datetime-local" id="Form_DueDate" name="Form.DueDate"
+                   value="@(Model.Form.DueDate?.ToLocalTime().ToString("yyyy-MM-ddTHH:mm"))" />
+            <div class="hint">Clear this box to use the default time for the chosen priority.</div>
+        </div>
+
+        <div class="form-row">
+            <label asp-for="Form.ChangedBy">Your Name</label>
+            <input asp-for="Form.ChangedBy" type="text" maxlength="80" placeholder="Saved in the ticket history" />
+        </div>
+
+        <button type="submit" class="btn btn-green">Save Changes</button>
+        <a href="/Ticket/Details/@Model.Id" class="btn btn-grey">Cancel</a>
+
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

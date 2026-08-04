@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Shared API contract: enums, request/response DTOs and query options.
+    Referenced by both HelpDesk.Api and HelpDesk.Mvc so the two can never drift apart,
+    and so the validation attributes are enforced identically on the client and the server.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>HelpDesk.Contracts</RootNamespace>
+  </PropertyGroup>
+
+</Project>
